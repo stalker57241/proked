@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.10.0)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-project(proked VERSION 1.0.00)
+project(proked VERSION 1.0.0)
 
 configure_file(src/config.hxx.in src/config.hxx)
 
