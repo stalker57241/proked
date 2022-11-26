@@ -1,14 +1,3 @@
-# proked
-Repository of new programming language "proked" by Stalker320
-
-### Deploying instructions
-After loading repository use `cmake .` for generate required files.
-
-### Building program
-For building program use `cmake --build .`
-
-### Sample code on proked language.
-```
 // Comment
 /* Multiline 
  * comment
@@ -56,4 +45,3 @@ def MyClass: ref, class : ParentClass {
         call chckresult_with_call(req cmpresult, 1, met1);
     };
 };
-```
