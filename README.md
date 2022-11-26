@@ -6,3 +6,54 @@ After loading repository use `cmake .` for generate required files.
 
 ### Building program
 For building program use `cmake --build .`
+
+### Sample code on proked language.
+```
+// Comment
+/* Multiline 
+ * comment
+*/
+
+// define variable of string type without value
+def var0: string;
+// var string with value of string type
+def var1: string, "value";
+
+// change variable value to "value"
+set var0: string, "value";
+
+// delete variable var0
+del var0;
+
+// create method add, that adds 2 int values
+def add: ref, method (req a: int = 0, req b: int = 0) {
+    return (req a + req b);
+};
+
+// with output to variable;
+def result: int;
+call add(4, 8) -> result;
+
+// without output
+call print(req result);
+
+// Class with constructor definition;
+def MyClass: ref, class {
+    def constructor: ref, method(req self: ref, req parent: ref = null) {
+        def cmpresult: int;
+        call cmp(req parent, null) -> cmpresult;
+        // cmp results:
+        // 0 EQUALS
+        // 1 NOT_EQUALS
+        // 2 GREATER
+        // 3 GREATER_OR_EQUALS
+        // 4 LESS
+        // 5 LESS_OR_EQUALS
+        
+        def met1: ref, method () {
+            call parent.constructor(self);
+        };
+        call chckresult_with_call(req cmpresult, 1, met1);
+    };
+};
+```
