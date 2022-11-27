@@ -1,8 +1,7 @@
-// Comment
-/* Multiline 
- * comment
-*/
+def a: int;
+def b: int, 4;
 
+/*
 // define variable of string type without value
 def var0: string;
 // var string with value of string type
@@ -45,3 +44,4 @@ def MyClass: ref, class : ParentClass {
         call chckresult_with_call(req cmpresult, 1, met1);
     };
 };
+*/

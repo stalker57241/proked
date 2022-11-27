@@ -68,7 +68,20 @@
 using std::string;
 using std::vector;
 
-
+void print_parseme_data(ExpressionParseme parseme) {
+	if (parseme.has_children) {
+		size_t ccount = parseme.get_child_count();
+		std::cout << "StatementsParseme:" << std::endl;
+		for (int i = 0; i < ccount; i ++) {
+			if (parseme.get_children()[i].parseme_type_id == 0x01) {
+				print_parseme_data(parseme.get_children()[i]);
+			}
+			else {
+				std::cout << "\tParseme" << std::endl;
+			}
+		}
+	}
+}
 int main(int argc, char const *argv[])
 {
 	string text;
@@ -103,37 +116,90 @@ int main(int argc, char const *argv[])
 
 	vector<Lexeme> lexemes_uncleaned = lexemize(text);
 
-	vector<Lexeme> lexemes;
+	vector<Lexeme> lexemes_comm;
 	
 	std::cout << "cleaning" << std::endl;
 
 	for (unsigned int i = 0U; i < lexemes_uncleaned.size(); i ++) {
 		// std::cout << "TEXT: " << lexemes_uncleaned[i].text << "\nID: " << lexemes_uncleaned[i].type_id << std::endl;
 		if (lexemes_uncleaned[i].type_id != 0x00) {
+			lexemes_comm.push_back(lexemes_uncleaned[i]);
+		}
+	}
+
+	char awaiting_code = 0x00;
+
+	vector<Lexeme> lexemes;
+
+	// cleaning comments from code
+	for (unsigned int i = 0U; i < lexemes_comm.size(); i++) {
+		if (awaiting_code == 0x00) {
+			if (lexemes_comm[i].type_id == 0x03) {
+				awaiting_code = 0x29;
+				continue;
+			}
+			else if (lexemes_comm[i].type_id == 0x04) {
+				awaiting_code = 0x05;
+				continue;
+			}
+			lexemes.push_back(lexemes_comm[i]);
+		}
+		if (lexemes_comm[i].type_id == awaiting_code) {
+			awaiting_code = 0x00;
+		}	
+	}
+	lexemes_uncleaned.clear();
+	lexemes_uncleaned = lexemes;
+	lexemes.clear();
+	for (unsigned int i = 0U; i < lexemes_uncleaned.size(); i ++) {
+		// std::cout << "TEXT: " << lexemes_uncleaned[i].text << "\nID: " << lexemes_uncleaned[i].type_id << std::endl;
+		if (lexemes_uncleaned[i].type_id != 0x29) {
 			lexemes.push_back(lexemes_uncleaned[i]);
 		}
 	}
-	{
-		using std::cout;
-		using std::endl;
-		using std::hex;
+	// lexemes = lexemes_comm;
+	// {
+	// 	using std::cout;
+	// 	using std::endl;
+	// 	using std::hex;
 		
-		cout << "displaying" << endl;
+	// 	cout << "displaying" << endl;
 		
-		for (unsigned int i = 0U; i < lexemes.size(); i ++) {
-			// cout << "TEXT:\t" << lexemes[i].text << "\nID:\t";
-			if (lexemes[i].type_id < 0x10) {
-				cout << "0x0" << hex << lexemes[i].type_id << " "; 
-			}
-			else {
-				cout << "0x" << hex << lexemes[i].type_id << " "; 
-			}
-			if (lexemes[i].type_id == 0x29) {
-				cout << endl;
-			}
+	// 	for (unsigned int i = 0U; i < lexemes.size(); i ++) {
+	// 		// cout << "TEXT:\t" << lexemes[i].text << "\nID:\t";
+	// 		if (lexemes[i].type_id < 0x10) {
+	// 			cout << "0x0" << hex << lexemes[i].type_id << " "; 
+	// 		}
+	// 		else {
+	// 			cout << "0x" << hex << lexemes[i].type_id << " "; 
+	// 		}
+	// 		if (lexemes[i].type_id == 0x29) {
+	// 			cout << endl;
+	// 		}
+	// 	}
+	// 	cout << endl;
+	// }
+	std::cout << "tree" << std::endl;
+
+	ExpressionParseme root;
+	try {
+		root = parse(lexemes);
+		std::cout << "try" << std::endl;
+
+		vector<ExpressionParseme> children = root.get_children();
+		size_t len = root.get_child_count();
+
+		for (uint32_t i = 0; i < len; i++) {
+			std::cout << children[i].parseme_type_id << std::endl;
 		}
-		cout << endl;
+	} catch (std::exception exc) {
+		std::cout << "error!"<< std::endl;
+		std::cout << "exception: " << exc.what() << std::endl;
+		return 1;
 	}
+	
+
+	// StatementsParseme r = (StatementsParseme) root;
 
 	return 0;
 }

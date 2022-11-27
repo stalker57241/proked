@@ -8,5 +8,7 @@
 #include <fstream>
 
 #include "lexeme.hxx"
+#include "parseme.hxx"
+
 
 #endif
